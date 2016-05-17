@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.VideoView;
 
 import butterknife.Bind;
@@ -17,13 +18,18 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static Uri first;
-    private static Uri second;
-    private static Uri third;
+    private static Uri firstUri;
+    private static Uri secondUri;
+    private static Uri thirdUri;
 
     private final GgikkoPagerAdapter adapter = new GgikkoPagerAdapter();
 
     @Bind(R.id.viewpager) ViewPager viewpager;
+
+    FrameLayout one_place_holder;
+    FrameLayout two_place_holder;
+    FrameLayout three_place_holder;
+    FrameLayout four_place_holder;
 
     VideoView one_video;
     VideoView two_video;
@@ -55,19 +61,43 @@ public class MainActivity extends AppCompatActivity {
                 default:
                     throw new IllegalArgumentException("error");
                 case 0:{
-                    return;
+                    one_place_holder.setVisibility(View.GONE);
+                    two_place_holder.setVisibility(View.VISIBLE);
+                    three_place_holder.setVisibility(View.VISIBLE);
+                    playVideo(one_video);
+                    stopVideo(two_video);
+                    stopVideo(three_video);
+                    break;
                 }
                 case 1:{
-                    return;
+                    one_place_holder.setVisibility(View.VISIBLE);
+                    two_place_holder.setVisibility(View.GONE);
+                    three_place_holder.setVisibility(View.VISIBLE);
+                    stopVideo(one_video);
+                    playVideo(two_video);
+                    stopVideo(three_video);
+//                    stopVideo(four_video);
+                    break;
                 }
                 case 2:{
-                    return;
+                    one_place_holder.setVisibility(View.VISIBLE);
+                    two_place_holder.setVisibility(View.VISIBLE);
+                    three_place_holder.setVisibility(View.GONE);
+                    stopVideo(one_video);
+                    stopVideo(two_video);
+                    playVideo(three_video);
+//                    stopVideo(four_video);
+                    break;
                 }
                 case 3:{
-                    return;
+                    stopVideo(one_video);
+                    stopVideo(two_video);
+                    playVideo(three_video);
+//                    stopVideo(four_video);
+                    break;
                 }
                 case 4:{
-                    return;
+                    break;
                 }
             }
         }
@@ -116,16 +146,22 @@ public class MainActivity extends AppCompatActivity {
                     ViewGroup layout = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.onepager, container,false);
                     container.addView(layout);
                     one_video = (VideoView) findViewById(R.id.one_video);
+                    one_place_holder = (FrameLayout) findViewById(R.id.one_place_holder);
+                    one_video.setVideoURI(firstUri);
                     return layout;
                 case 1:
                     ViewGroup layout2 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.twopager, container,false);
                     container.addView(layout2);
                     two_video = (VideoView) findViewById(R.id.two_video);
+                    two_place_holder = (FrameLayout) findViewById(R.id.two_place_holder);
+                    two_video.setVideoURI(secondUri);
                     return layout2;
                 case 2:
                     ViewGroup layout3 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.threepager, container,false);
                     container.addView(layout3);
                     three_video = (VideoView) findViewById(R.id.three_video);
+                    three_place_holder = (FrameLayout) findViewById(R.id.three_place_holder);
+                    three_video.setVideoURI(thirdUri);
                     return layout3;
                 case 3:
                     ViewGroup layout4 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.onepager, container,false);
