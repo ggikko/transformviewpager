@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.viewpager) ViewPager viewpager;
 
+    //TODO : framelayout 걷어내고 black background에 대한 다른 대안을 고안해야함
     FrameLayout one_place_holder;
     FrameLayout two_place_holder;
     FrameLayout three_place_holder;
@@ -47,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
         viewpager.addOnPageChangeListener(pageChangeListener);
         viewpager.setOffscreenPageLimit(4);
 
-
+//        firstUri= Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.name);
+//        secondUri= Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.name1);
+//        thirdUri= Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.name2);
     }
 
     ViewPager.SimpleOnPageChangeListener pageChangeListener = new ViewPager.SimpleOnPageChangeListener(){
@@ -103,30 +106,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    /** start video */
-    private void playVideo(VideoView videoView){
-        videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(MediaPlayer mp, int what, int extra) {
-                return false;
-            }
-        });
-        try {
-            videoView.start();
-        }catch(Throwable e){
-            Log.e("ggikko", "비디오 실행 불가");
-        }
-    }
-
-    /** stop video */
-    private void stopVideo(VideoView videoView){
-        if(videoView == null){
-            return;
-        }
-        videoView.seekTo(0);
-        videoView.pause();
-    }
-
     private class GgikkoPagerAdapter extends PagerAdapter{
 
         @Override
@@ -181,6 +160,32 @@ public class MainActivity extends AppCompatActivity {
             container.removeView((View) object);
         }
     }
+
+    /** start video */
+    private void playVideo(VideoView videoView){
+        videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                //TODO 에러처리
+                return false;
+            }
+        });
+        try {
+            videoView.start();
+        }catch(Throwable e){
+            Log.e("ggikko", "비디오 실행 불가");
+        }
+    }
+
+    /** stop video */
+    private void stopVideo(VideoView videoView){
+        if(videoView == null){
+            return;
+        }
+        videoView.seekTo(0);
+        videoView.pause();
+    }
+
 
 
 }
