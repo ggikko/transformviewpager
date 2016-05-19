@@ -1,13 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     tools:context="ggikko.me.transformapp.MainActivity">
+
+    <SurfaceView
+        android:layout_width="0px"
+        android:layout_height="0px" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="40dp">
+
+        <TextView
+            android:id="@+id/jump"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:layout_gravity="center_vertical"
+            android:padding="5dp"
+            android:gravity="left"
+            android:text="건너뛰기"/>
+
+        <ggikko.me.transformapp.indicator.ExtensiblePageIndicator
+            android:id="@+id/extensiblePageIndicator"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:layout_gravity="center_vertical"
+            app:indicatorPadding="16dp"
+            app:indicatorRadius="3dp" />
+
+        <TextView
+            android:id="@+id/next"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_weight="3"
+            android:gravity="right"
+            android:layout_gravity="center_vertical"
+            android:padding="5dp"
+            android:drawableRight="@drawable/rightarrow"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package ggikko.me.transformapp;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
@@ -14,7 +15,10 @@ import android.widget.FrameLayout;
 import android.widget.VideoView;
 
 import butterknife.Bind;
+import butterknife.BindColor;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import ggikko.me.transformapp.indicator.ExtensiblePageIndicator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,13 +28,28 @@ public class MainActivity extends AppCompatActivity {
 
     private final GgikkoPagerAdapter adapter = new GgikkoPagerAdapter();
 
-    @Bind(R.id.viewpager) ViewPager viewpager;
+    @Bind(R.id.viewpager)
+    ViewPager viewpager;
+    @Bind(R.id.extensiblePageIndicator)
+    ExtensiblePageIndicator extensiblePageIndicator;
+    @BindColor(R.color.transparent)
+    int transparent;
+
+    @OnClick(R.id.next)
+    void callNext() {
+        viewpager.setCurrentItem(getItem(+1), true);
+    }
+
+    @OnClick(R.id.jump)
+    void callJump() {
+        startActivity(new Intent(MainActivity.this, NextActivity.class));
+    }
 
     //TODO : framelayout 걷어내고 black background에 대한 다른 대안을 고안해야함
     FrameLayout one_place_holder;
     FrameLayout two_place_holder;
     FrameLayout three_place_holder;
-    FrameLayout four_place_holder;
+    FrameLayout placeholder;
 
     VideoView one_video;
     VideoView two_video;
@@ -48,65 +67,84 @@ public class MainActivity extends AppCompatActivity {
         viewpager.addOnPageChangeListener(pageChangeListener);
         viewpager.setOffscreenPageLimit(4);
 
-//        firstUri= Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.name);
-//        secondUri= Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.name1);
-//        thirdUri= Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.name2);
+        extensiblePageIndicator.initViewPager(viewpager);
+
+//        firsttUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.nameone);
+
     }
 
-    ViewPager.SimpleOnPageChangeListener pageChangeListener = new ViewPager.SimpleOnPageChangeListener(){
+    private int getItem(int i) {
+        return viewpager.getCurrentItem() + i;
+    }
+
+    ViewPager.SimpleOnPageChangeListener pageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
 
         private int currentPosition = -1;
         private int startTimeForTab;
-        
+
         @Override
         public void onPageSelected(int position) {
-            switch (position){
+            switch (position) {
                 default:
                     throw new IllegalArgumentException("error");
-                case 0:{
-                    one_place_holder.setVisibility(View.GONE);
-                    two_place_holder.setVisibility(View.VISIBLE);
-                    three_place_holder.setVisibility(View.VISIBLE);
-                    playVideo(one_video);
-                    stopVideo(two_video);
-                    stopVideo(three_video);
-                    break;
-                }
-                case 1:{
-                    one_place_holder.setVisibility(View.VISIBLE);
-                    two_place_holder.setVisibility(View.GONE);
-                    three_place_holder.setVisibility(View.VISIBLE);
-                    stopVideo(one_video);
+                case 0: {
                     playVideo(two_video);
                     stopVideo(three_video);
-//                    stopVideo(four_video);
+                    stopVideo(four_video);
+                    placeholder.setVisibility(View.VISIBLE);
+                    Log.e("ggikko", "position :" + position);
                     break;
                 }
-                case 2:{
-                    one_place_holder.setVisibility(View.VISIBLE);
-                    two_place_holder.setVisibility(View.VISIBLE);
-                    three_place_holder.setVisibility(View.GONE);
-                    stopVideo(one_video);
+                case 1: {
+//                    stopVideo(one_video);
+                    playVideo(two_video);
+                    stopVideo(three_video);
+                    stopVideo(four_video);
+                    placeholder.setVisibility(View.VISIBLE);
+                    Log.e("ggikko", "position :" + position);
+                    break;
+                }
+                case 2: {
+//                    stopVideo(one_video);
                     stopVideo(two_video);
                     playVideo(three_video);
-//                    stopVideo(four_video);
+                    stopVideo(four_video);
+                    Thread thread = new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(300);
+                            } catch (InterruptedException e) {
+                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    placeholder.setVisibility(View.GONE);
+                                }
+                            });
+                        }
+                    };
+                    thread.start(); //start the thread
+                    Log.e("ggikko", "position :" + position);
                     break;
                 }
-                case 3:{
-                    stopVideo(one_video);
+                case 3: {
+//                    stopVideo(one_video);
                     stopVideo(two_video);
-                    playVideo(three_video);
-//                    stopVideo(four_video);
+                    stopVideo(three_video);
+                    playVideo(four_video);
+                    placeholder.setVisibility(View.VISIBLE);
+                    Log.e("ggikko", "position :" + position);
                     break;
                 }
-                case 4:{
+                case 4: {
                     break;
                 }
             }
         }
     };
 
-    private class GgikkoPagerAdapter extends PagerAdapter{
+    private class GgikkoPagerAdapter extends PagerAdapter {
 
         @Override
         public int getCount() {
@@ -115,37 +153,34 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-
             switch (position) {
                 default:
-                    ViewGroup layout0 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.onepager, container,false);
+                    ViewGroup layout0 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.onepager, container, false);
                     container.addView(layout0);
                     return layout0;
                 case 0:
-                    ViewGroup layout = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.onepager, container,false);
+                    ViewGroup layout = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.onepager, container, false);
                     container.addView(layout);
-                    one_video = (VideoView) findViewById(R.id.one_video);
-                    one_place_holder = (FrameLayout) findViewById(R.id.one_place_holder);
-                    one_video.setVideoURI(firstUri);
+//                    one_video = (VideoView) findViewById(R.id.one_video);
                     return layout;
                 case 1:
-                    ViewGroup layout2 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.twopager, container,false);
+                    ViewGroup layout2 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.twopager, container, false);
                     container.addView(layout2);
                     two_video = (VideoView) findViewById(R.id.two_video);
-                    two_place_holder = (FrameLayout) findViewById(R.id.two_place_holder);
-                    two_video.setVideoURI(secondUri);
+                    two_video.setVideoURI(firstUri);
                     return layout2;
                 case 2:
-                    ViewGroup layout3 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.threepager, container,false);
+                    ViewGroup layout3 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.threepager, container, false);
                     container.addView(layout3);
                     three_video = (VideoView) findViewById(R.id.three_video);
-                    three_place_holder = (FrameLayout) findViewById(R.id.three_place_holder);
-                    three_video.setVideoURI(thirdUri);
+                    three_video.setVideoURI(secondUri);
+                    placeholder = (FrameLayout) findViewById(R.id.placeholder);
                     return layout3;
                 case 3:
-                    ViewGroup layout4 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.onepager, container,false);
+                    ViewGroup layout4 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.fourpager, container, false);
                     container.addView(layout4);
                     four_video = (VideoView) findViewById(R.id.four_video);
+                    four_video.setVideoURI(thirdUri);
                     return layout4;
             }
         }
@@ -161,8 +196,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** start video */
-    private void playVideo(VideoView videoView){
+    /**
+     * start video
+     */
+    private void playVideo(VideoView videoView) {
+
         videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -170,22 +208,24 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
         try {
             videoView.start();
-        }catch(Throwable e){
+        } catch (Throwable e) {
             Log.e("ggikko", "비디오 실행 불가");
         }
     }
 
-    /** stop video */
-    private void stopVideo(VideoView videoView){
-        if(videoView == null){
+    /**
+     * stop video
+     */
+    private void stopVideo(VideoView videoView) {
+        if (videoView == null) {
             return;
         }
         videoView.seekTo(0);
         videoView.pause();
     }
-
 
 
 }

@@ -3,7 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     tools:context="ggikko.me.transformapp.MainActivity">
+
+    <SurfaceView
+        android:layout_width="0px"
+        android:layout_height="0px" />
 
     <VideoView
         android:id="@+id/two_video"
@@ -11,11 +16,5 @@
         android:layout_height="200dp"
         android:layout_gravity="center"
         android:layout_centerInParent="true"/>
-
-    <FrameLayout
-        android:id="@+id/two_place_holder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"/>
 
 </FrameLayout>
