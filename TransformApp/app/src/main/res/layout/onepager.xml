@@ -16,4 +16,12 @@
         android:textSize="14sp"
         android:textColor="@color/white"/>
 
+
+    <FrameLayout
+        android:id="@+id/one_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark"/>
+
+
 </RelativeLayout>
