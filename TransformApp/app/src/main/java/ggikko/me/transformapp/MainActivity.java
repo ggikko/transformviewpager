@@ -22,39 +22,40 @@ import ggikko.me.transformapp.indicator.ExtensiblePageIndicator;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static Uri firstUri;
-    private static Uri secondUri;
-    private static Uri thirdUri;
-
     private final GgikkoPagerAdapter adapter = new GgikkoPagerAdapter();
 
     @Bind(R.id.viewpager)
     ViewPager viewpager;
     @Bind(R.id.extensiblePageIndicator)
     ExtensiblePageIndicator extensiblePageIndicator;
-    @BindColor(R.color.transparent)
-    int transparent;
 
     @OnClick(R.id.next)
     void callNext() {
-        viewpager.setCurrentItem(getItem(+1), true);
+        int page = getItem(+1);
+        viewpager.setCurrentItem(page, true);
+        if(page >3){
+            startActivity(new Intent(MainActivity.this, NextActivity.class));
+            finish();
+        }
     }
 
     @OnClick(R.id.jump)
     void callJump() {
         startActivity(new Intent(MainActivity.this, NextActivity.class));
+        finish();
     }
 
-    //TODO : framelayout 걷어내고 black background에 대한 다른 대안을 고안해야함
-    FrameLayout one_place_holder;
-    FrameLayout two_place_holder;
-    FrameLayout three_place_holder;
-    FrameLayout placeholder;
+    private static Uri secondUri;
+    private static Uri thirdUri;
+    private static Uri fourthUri;
 
-    VideoView one_video;
-    VideoView two_video;
-    VideoView three_video;
-    VideoView four_video;
+    private VideoView second_video;
+    private VideoView third_video;
+    private VideoView fourth_video;
+
+    private FrameLayout second_placeholder;
+    private FrameLayout third_placeholder;
+    private FrameLayout fourth_placeholder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
 
         extensiblePageIndicator.initViewPager(viewpager);
 
-//        firsttUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.nameone);
+        secondUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.nameone);
+        thirdUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.nameone);
+        fourthUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.nameone);
 
     }
 
@@ -87,59 +90,26 @@ public class MainActivity extends AppCompatActivity {
             switch (position) {
                 default:
                     throw new IllegalArgumentException("error");
-                case 0: {
-                    playVideo(two_video);
-                    stopVideo(three_video);
-                    stopVideo(four_video);
-                    placeholder.setVisibility(View.VISIBLE);
-                    Log.e("ggikko", "position :" + position);
+
+                case 0:
                     break;
-                }
-                case 1: {
-//                    stopVideo(one_video);
-                    playVideo(two_video);
-                    stopVideo(three_video);
-                    stopVideo(four_video);
-                    placeholder.setVisibility(View.VISIBLE);
-                    Log.e("ggikko", "position :" + position);
+
+                case 1:
+                    setVideoStartAndStop(second_video, third_video, fourth_video);
+                    setVisibilityGone(second_placeholder);
                     break;
-                }
-                case 2: {
-//                    stopVideo(one_video);
-                    stopVideo(two_video);
-                    playVideo(three_video);
-                    stopVideo(four_video);
-                    Thread thread = new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(300);
-                            } catch (InterruptedException e) {
-                            }
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    placeholder.setVisibility(View.GONE);
-                                }
-                            });
-                        }
-                    };
-                    thread.start(); //start the thread
-                    Log.e("ggikko", "position :" + position);
+
+
+                case 2:
+                    setVideoStartAndStop(third_video, second_video, fourth_video);
+                    setVisibilityGone(third_placeholder);
                     break;
-                }
-                case 3: {
-//                    stopVideo(one_video);
-                    stopVideo(two_video);
-                    stopVideo(three_video);
-                    playVideo(four_video);
-                    placeholder.setVisibility(View.VISIBLE);
-                    Log.e("ggikko", "position :" + position);
+
+
+                case 3:
+                    setVideoStartAndStop(fourth_video,second_video,third_video);
+                    setVisibilityGone(fourth_placeholder);
                     break;
-                }
-                case 4: {
-                    break;
-                }
             }
         }
     };
@@ -161,26 +131,27 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     ViewGroup layout = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.onepager, container, false);
                     container.addView(layout);
-//                    one_video = (VideoView) findViewById(R.id.one_video);
                     return layout;
                 case 1:
                     ViewGroup layout2 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.twopager, container, false);
                     container.addView(layout2);
-                    two_video = (VideoView) findViewById(R.id.two_video);
-                    two_video.setVideoURI(firstUri);
+                    second_video = (VideoView) findViewById(R.id.two_video);
+                    second_video.setVideoURI(secondUri);
+                    second_placeholder = (FrameLayout) findViewById(R.id.two_placeholder);
                     return layout2;
                 case 2:
                     ViewGroup layout3 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.threepager, container, false);
                     container.addView(layout3);
-                    three_video = (VideoView) findViewById(R.id.three_video);
-                    three_video.setVideoURI(secondUri);
-                    placeholder = (FrameLayout) findViewById(R.id.placeholder);
+                    third_video = (VideoView) findViewById(R.id.three_video);
+                    third_video.setVideoURI(thirdUri);
+                    third_placeholder = (FrameLayout) findViewById(R.id.three_placeholder);
                     return layout3;
                 case 3:
                     ViewGroup layout4 = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.fourpager, container, false);
                     container.addView(layout4);
-                    four_video = (VideoView) findViewById(R.id.four_video);
-                    four_video.setVideoURI(thirdUri);
+                    fourth_video = (VideoView) findViewById(R.id.four_video);
+                    fourth_video.setVideoURI(fourthUri);
+                    fourth_placeholder = (FrameLayout) findViewById(R.id.four_placeholder);
                     return layout4;
             }
         }
@@ -194,6 +165,38 @@ public class MainActivity extends AppCompatActivity {
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
         }
+    }
+
+    public void setVideoStartAndStop(VideoView start, VideoView stop1, VideoView stop2){
+        playVideo(start);
+        stopVideo(stop1);
+        stopVideo(stop2);
+    }
+
+
+    public void setVisibilityVisible(FrameLayout... frameLayouts){
+        for (FrameLayout frameLayout : frameLayouts){
+            frameLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setVisibilityGone(final FrameLayout frameLayout){
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        frameLayout.setVisibility(View.GONE);
+                    }
+                });
+            }
+        };
+        thread.start();
     }
 
     /**
@@ -215,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e("ggikko", "비디오 실행 불가");
         }
     }
+
 
     /**
      * stop video
